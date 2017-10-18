@@ -1,0 +1,22 @@
+version: '2'
+
+services:
+
+  database-stat:
+    image: postgres:latest
+    environment:
+      - POSTGRES_DB=stat
+      - POSTGRES_USER=stat
+      - POSTGRES_PASSWORD=stat
+    ports:
+     - "5432:5432"
+    volumes:
+     - /home/all/db-data/stat:/var/lib/postgresql/data
+
+  go-stat:
+    build:
+      .
+    ports:
+      - "9090:8080"
+    depends_on:
+      - database-stat
