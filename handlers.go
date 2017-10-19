@@ -3,44 +3,80 @@ package main
 import (
 	"encoding/json"
 	"net/http"
-	"strconv"
-
-	"github.com/gorilla/mux"
+	"io/ioutil"
+	"io"
+	"log"
 )
 
-func LeadIndex(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
-	if err := json.NewEncoder(w).Encode(RepoFindLeads()); err != nil {
+func Ping(w http.ResponseWriter, r *http.Request) {
+	if err := json.NewEncoder(w).Encode("ok"); err != nil {
 		panic(err)
 	}
 }
 
-func TodoView(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	var leadId int
-	var err error
-	if leadId, err = strconv.Atoi(vars["leadId"]); err != nil {
+func VeinTrackingCreate(w http.ResponseWriter, r *http.Request) {
+	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
+	if err != nil {
 		panic(err)
 	}
-	lead := RepoFindLead(leadId)
-	if lead.Id > 0 {
+	if err := r.Body.Close(); err != nil {
+		panic(err)
+	}
+
+	var tracking Tracking
+
+	if err = json.Unmarshal(body, &tracking); err != nil {
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-		w.WriteHeader(http.StatusOK)
-		if err := json.NewEncoder(w).Encode(lead); err != nil {
+		w.WriteHeader(422) // unprocessable entity
+		if err := json.NewEncoder(w).Encode(err); err != nil {
 			panic(err)
 		}
-		return
 	}
 
-	// If we didn't find it, 404
+	log.Printf("TRACKING: %v", tracking)
+
+	t := RepoCreateTracking(tracking)
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusNotFound)
-	if err := json.NewEncoder(w).Encode(jsonErr{Code: http.StatusNotFound, Text: "Not Found"}); err != nil {
+	w.WriteHeader(http.StatusCreated)
+	if err := json.NewEncoder(w).Encode(t); err != nil {
 		panic(err)
 	}
-
 }
+
+
+//func VeinTrackingCreate(w http.ResponseWriter, r *http.Request) {
+//	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+//	w.WriteHeader(http.StatusOK)
+//	if err := json.NewEncoder(w).Encode(RepoFindLeads()); err != nil {
+//		panic(err)
+//	}
+//}
+
+//func TodoView(w http.ResponseWriter, r *http.Request) {
+//	vars := mux.Vars(r)
+//	var leadId int
+//	var err error
+//	if leadId, err = strconv.Atoi(vars["leadId"]); err != nil {
+//		panic(err)
+//	}
+//	lead := RepoFindLead(leadId)
+//	if lead.Id > 0 {
+//		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+//		w.WriteHeader(http.StatusOK)
+//		if err := json.NewEncoder(w).Encode(lead); err != nil {
+//			panic(err)
+//		}
+//		return
+//	}
+//
+//	// If we didn't find it, 404
+//	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+//	w.WriteHeader(http.StatusNotFound)
+//	if err := json.NewEncoder(w).Encode(jsonErr{Code: http.StatusNotFound, Text: "Not Found"}); err != nil {
+//		panic(err)
+//	}
+//
+//}
 
 //func TodoCreate(w http.ResponseWriter, r *http.Request) {
 //	var todo Todo

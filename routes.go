@@ -13,21 +13,15 @@ type Routes []Route
 
 var routes = Routes{
 	Route{
+		"Ping",
+		"GET",
+		"/v1/ping",
+		Ping,
+	},
+	Route{
 		"VeinOrderCreate",
 		"POST",
-		"/v1/vein/order-create",
-		VeinOrderCreate,
-	},
-	Route{
-		"LeadIndex",
-		"GET",
-		"/lead",
-		LeadIndex,
-	},
-	Route{
-		"LeadView",
-		"GET",
-		"/lead/{leadId}",
-		TodoView,
+		"/v1/vein/redirect-create",
+		VeinTrackingCreate,
 	},
 }
