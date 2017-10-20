@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"io/ioutil"
 	"io"
-	"log"
 )
 
 func Ping(w http.ResponseWriter, r *http.Request) {
@@ -14,7 +13,7 @@ func Ping(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func VeinTrackingCreate(w http.ResponseWriter, r *http.Request) {
+func VeinRedirectCreate(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
 	if err != nil {
 		panic(err)
@@ -23,19 +22,17 @@ func VeinTrackingCreate(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	var tracking Tracking
+	var redirect Redirect
 
-	if err = json.Unmarshal(body, &tracking); err != nil {
+	if err = json.Unmarshal(body, &redirect); err != nil {
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-		w.WriteHeader(422) // unprocessable entity
+		w.WriteHeader(422)
 		if err := json.NewEncoder(w).Encode(err); err != nil {
 			panic(err)
 		}
 	}
 
-	log.Printf("TRACKING: %v", tracking)
-
-	t := RepoCreateTracking(tracking)
+	t := RepoRedirectCreate(redirect)
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusCreated)
 	if err := json.NewEncoder(w).Encode(t); err != nil {
@@ -43,62 +40,110 @@ func VeinTrackingCreate(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func VeinViewCreate(w http.ResponseWriter, r *http.Request) {
+	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
+	if err != nil {
+		panic(err)
+	}
+	if err := r.Body.Close(); err != nil {
+		panic(err)
+	}
 
-//func VeinTrackingCreate(w http.ResponseWriter, r *http.Request) {
-//	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-//	w.WriteHeader(http.StatusOK)
-//	if err := json.NewEncoder(w).Encode(RepoFindLeads()); err != nil {
-//		panic(err)
-//	}
-//}
+	var view View
 
-//func TodoView(w http.ResponseWriter, r *http.Request) {
-//	vars := mux.Vars(r)
-//	var leadId int
-//	var err error
-//	if leadId, err = strconv.Atoi(vars["leadId"]); err != nil {
-//		panic(err)
-//	}
-//	lead := RepoFindLead(leadId)
-//	if lead.Id > 0 {
-//		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-//		w.WriteHeader(http.StatusOK)
-//		if err := json.NewEncoder(w).Encode(lead); err != nil {
-//			panic(err)
-//		}
-//		return
-//	}
-//
-//	// If we didn't find it, 404
-//	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-//	w.WriteHeader(http.StatusNotFound)
-//	if err := json.NewEncoder(w).Encode(jsonErr{Code: http.StatusNotFound, Text: "Not Found"}); err != nil {
-//		panic(err)
-//	}
-//
-//}
+	if err = json.Unmarshal(body, &view); err != nil {
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(422)
+		if err := json.NewEncoder(w).Encode(err); err != nil {
+			panic(err)
+		}
+	}
 
-//func TodoCreate(w http.ResponseWriter, r *http.Request) {
-//	var todo Todo
-//	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
-//	if err != nil {
-//		panic(err)
-//	}
-//	if err := r.Body.Close(); err != nil {
-//		panic(err)
-//	}
-//	if err := json.Unmarshal(body, &todo); err != nil {
-//		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-//		w.WriteHeader(422)
-//		if err := json.NewEncoder(w).Encode(err); err != nil {
-//			panic(err)
-//		}
-//	}
-//
-//	t := RepoCreateTodo(todo)
-//	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-//	w.WriteHeader(http.StatusCreated)
-//	if err := json.NewEncoder(w).Encode(t); err != nil {
-//		panic(err)
-//	}
-//}
+	t := RepoViewCreate(view)
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusCreated)
+	if err := json.NewEncoder(w).Encode(t); err != nil {
+		panic(err)
+	}
+}
+
+func VeinOrderCreate(w http.ResponseWriter, r *http.Request) {
+	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
+	if err != nil {
+		panic(err)
+	}
+	if err := r.Body.Close(); err != nil {
+		panic(err)
+	}
+
+	var order OrderFact
+
+	if err = json.Unmarshal(body, &order); err != nil {
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(422)
+		if err := json.NewEncoder(w).Encode(err); err != nil {
+			panic(err)
+		}
+	}
+
+	t := RepoOrderCreate(order)
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusCreated)
+	if err := json.NewEncoder(w).Encode(t); err != nil {
+		panic(err)
+	}
+}
+
+func VeinOrderStatus(w http.ResponseWriter, r *http.Request) {
+	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
+	if err != nil {
+		panic(err)
+	}
+	if err := r.Body.Close(); err != nil {
+		panic(err)
+	}
+
+	var order OrderFact
+
+	if err = json.Unmarshal(body, &order); err != nil {
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(422)
+		if err := json.NewEncoder(w).Encode(err); err != nil {
+			panic(err)
+		}
+	}
+
+	t := RepoOrderStatus(order)
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusCreated)
+	if err := json.NewEncoder(w).Encode(t); err != nil {
+		panic(err)
+	}
+}
+
+func VeinOrderPayment(w http.ResponseWriter, r *http.Request) {
+	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
+	if err != nil {
+		panic(err)
+	}
+	if err := r.Body.Close(); err != nil {
+		panic(err)
+	}
+
+	var order OrderFact
+
+	if err = json.Unmarshal(body, &order); err != nil {
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(422)
+		if err := json.NewEncoder(w).Encode(err); err != nil {
+			panic(err)
+		}
+	}
+
+	t := RepoOrderPayment(order)
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusCreated)
+	if err := json.NewEncoder(w).Encode(t); err != nil {
+		panic(err)
+	}
+}

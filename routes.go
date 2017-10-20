@@ -21,7 +21,31 @@ var routes = Routes{
 	Route{
 		"VeinOrderCreate",
 		"POST",
+		"/v1/vein/order-create",
+		VeinOrderCreate,
+	},
+	Route{
+		"VeinOrderStatus",
+		"POST",
+		"/v1/vein/order-status",
+		VeinOrderStatus,
+	},
+	Route{
+		"VeinOrderPayment",
+		"POST",
+		"/v1/vein/order-payment",
+		VeinOrderPayment,
+	},
+	Route{
+		"VeinRedirectCreate",
+		"POST",
 		"/v1/vein/redirect-create",
-		VeinTrackingCreate,
+		VeinRedirectCreate,
+	},
+	Route{
+		"VeinViewCreate",
+		"POST",
+		"/v1/vein/view-create",
+		VeinViewCreate,
 	},
 }

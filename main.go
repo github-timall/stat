@@ -3,14 +3,7 @@ package main
 import (
 	"net/http"
 	"time"
-	"log"
 )
-
-func checkErr(err error) {
-	if err != nil {
-		log.Fatalf("FAILURE: %v", err)
-	}
-}
 
 func main() {
 	r := NewRouter()
@@ -22,5 +15,6 @@ func main() {
 		ReadTimeout:  15 * time.Second,
 	}
 
-	log.Fatal(srv.ListenAndServe())
+	err := srv.ListenAndServe()
+	checkErr(err)
 }
