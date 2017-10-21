@@ -59,13 +59,13 @@ CREATE TABLE redirect_fact(
   landing_id INTEGER,
   prelanding_id INTEGER,
   stream_id INTEGER,
-  is_mobile BOOLEAN,
-  geo_code CHAR(2),
-  sub_1_id INTEGER,
-  sub_2_id INTEGER,
-  sub_3_id INTEGER,
-  sub_4_id INTEGER,
-  sub_5_id INTEGER,
+  device_is_mobile BOOLEAN DEFAULT FALSE,
+  location_geo_code CHAR(2),
+  sub1_id INTEGER,
+  sub2_id INTEGER,
+  sub3_id INTEGER,
+  sub4_id INTEGER,
+  sub5_id INTEGER,
   CONSTRAINT redirect_fact_pk PRIMARY KEY (id)
 );
 
@@ -74,17 +74,6 @@ CREATE INDEX redirect_fact_uuid ON redirect_fact (uuid);
 CREATE TABLE view_fact(
   id SERIAL,
   uuid CHAR(36),
-  unique_id INTEGER,
-  landing_id INTEGER,
-  prelanding_id INTEGER,
-  stream_id INTEGER,
-  is_mobile BOOLEAN,
-  geo_code CHAR(2),
-  sub_1_id INTEGER,
-  sub_2_id INTEGER,
-  sub_3_id INTEGER,
-  sub_4_id INTEGER,
-  sub_5_id INTEGER,
   CONSTRAINT view_fact_pk PRIMARY KEY (id)
 );
 

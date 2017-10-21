@@ -11,11 +11,16 @@ type (
 		Location	Location	`valid:"int" json:"location"`
 		Stream		Stream		`valid:"int" json:"stream"`
 		Device		Device		`valid:"int" json:"device"`
-		Sub1		string		`valid:"string" json:"sub1"`
-		Sub2		string		`valid:"string" json:"sub2"`
-		Sub3		string		`valid:"string" json:"sub3"`
-		Sub4		string		`valid:"string" json:"sub4"`
-		Sub5		string		`valid:"string" json:"sub5"`
+		SubName1	string		`json:"sub1"`
+		SubName2	string		`json:"sub2"`
+		SubName3	string		`json:"sub3"`
+		SubName4	string		`json:"sub4"`
+		SubName5	string		`json:"sub5"`
+		Sub1		Sub			`json:"subs1"`
+		Sub2		Sub			`json:"subs2"`
+		Sub3		Sub			`json:"subs3"`
+		Sub4		Sub			`json:"subs4"`
+		Sub5		Sub			`json:"subs5"`
 	}
 
 	RedirectFact struct {
@@ -39,11 +44,6 @@ type (
 		Location	Location	`valid:"int" json:"location"`
 		Stream		Stream		`valid:"int" json:"stream"`
 		Device		Device		`valid:"int" json:"device"`
-		Sub1		string		`valid:"string" json:"sub1"`
-		Sub2		string		`valid:"string" json:"sub2"`
-		Sub3		string		`valid:"string" json:"sub3"`
-		Sub4		string		`valid:"string" json:"sub4"`
-		Sub5		string		`valid:"string" json:"sub5"`
 	}
 
 	Landing struct {
@@ -84,3 +84,20 @@ type (
 		UserId 	int	`json:"user_id"`
 	}
 )
+
+func (r *Redirect) ParseSub() {
+	r.Sub1.Name = r.SubName1
+	r.Sub1.Type = 1
+
+	r.Sub2.Name = r.SubName2
+	r.Sub2.Type = 2
+
+	r.Sub3.Name = r.SubName3
+	r.Sub3.Type = 3
+
+	r.Sub4.Name = r.SubName4
+	r.Sub4.Type = 4
+
+	r.Sub5.Name = r.SubName5
+	r.Sub5.Type = 5
+}

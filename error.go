@@ -9,6 +9,6 @@ type jsonErr struct {
 
 func checkErr(err error) {
 	if err != nil {
-		log.Fatalf("FAILURE: %v", err)
+		log.Printf("FAILURE: %v", err)
 	}
 }
