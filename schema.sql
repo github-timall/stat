@@ -1,5 +1,5 @@
 CREATE TABLE order_fact(
-  order_id INTEGER,
+  order_id SERIAL,
   uuid CHAR(36),
   type SMALLINT,
   payment_type SMALLINT,
