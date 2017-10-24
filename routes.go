@@ -1,6 +1,9 @@
 package main
 
-import "net/http"
+import(
+	"net/http"
+	"github.com/github-timall/stat/handlers"
+)
 
 type Route struct {
 	Name        string
@@ -16,36 +19,30 @@ var routes = Routes{
 		"Ping",
 		"GET",
 		"/v1/ping",
-		Ping,
+		handlers.Ping,
 	},
 	Route{
 		"VeinOrderCreate",
 		"POST",
 		"/v1/vein/order-create",
-		VeinOrderCreate,
+		handlers.VeinOrderCreate,
 	},
 	Route{
 		"VeinOrderStatus",
 		"POST",
 		"/v1/vein/order-status",
-		VeinOrderStatus,
+		handlers.VeinOrderStatus,
 	},
 	Route{
 		"VeinOrderPayment",
 		"POST",
 		"/v1/vein/order-payment",
-		VeinOrderPayment,
+		handlers.VeinOrderPayment,
 	},
 	Route{
 		"VeinRedirectCreate",
 		"POST",
 		"/v1/vein/redirect-create",
-		VeinRedirectCreate,
-	},
-	Route{
-		"VeinViewCreate",
-		"POST",
-		"/v1/vein/view-create",
-		VeinViewCreate,
+		handlers.VeinRedirectCreate,
 	},
 }

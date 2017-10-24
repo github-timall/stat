@@ -1,24 +1,17 @@
-#имя базового образа
-FROM golang:latest
+FROM golang:alpine
 
-#создаем папку, где будет наша программа
+RUN apk update && apk upgrade && \
+    apk add --no-cache git
+
 RUN mkdir -p /go/src/gitlab.com/drcash/stat
 
-#идем в папку
 WORKDIR /go/src/gitlab.com/drcash/stat
 
-#копируем все файлы из текущего пути к файлу Docker на вашей системе в нашу новую папку образа
 COPY . /go/src/gitlab.com/drcash/stat
 
-#скачиваем зависимые пакеты через скрипт, любезно разработанный командой docker
 RUN go-wrapper download
-
-#инсталлируем все пакеты и вашу программу
 RUN go-wrapper install
 
-#запускаем вашу программу через тот же скрипт, чтобы не зависеть от ее скомпилированного имени
-#go-wrapper запускает set -x для того, чтобы отправить в stderr имя бинарника Вашей программы в момент ее запуска
 CMD ["go-wrapper", "run"]
 
-#пробрасываем порт вашей программы наружу образа
 EXPOSE 8080

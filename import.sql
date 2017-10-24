@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS `order_fact` (
   `redirect_id` INTEGER,
   `time_id` INTEGER,
   `time` TIMESTAMP,
+
   PRIMARY KEY (id)
 ) ENGINE='InnoDB' COLLATE 'utf8_unicode_ci';
 
@@ -25,13 +26,6 @@ CREATE TABLE IF NOT EXISTS `order_time` (
   `quarter_id` SMALLINT,
   `year_id` SMALLINT,
   PRIMARY KEY (id)
-) ENGINE='InnoDB' COLLATE 'utf8_unicode_ci';
-
-CREATE TABLE IF NOT EXISTS `order_crm` (
-  order_id INT NOT NULL AUTO_INCREMENT,
-  external_id INTEGER,
-  crm_id SMALLINT,
-  PRIMARY KEY (order_id)
 ) ENGINE='InnoDB' COLLATE 'utf8_unicode_ci';
 
 CREATE TABLE IF NOT EXISTS `client`(
@@ -214,6 +208,26 @@ UPDATE `redirect_fact` `r` SET `r`.`sub1_id` = (
 SELECT `s`.`id` FROM (
   SELECT * FROM `sub` `ss` LEFT JOIN `sub_user` `su` ON `su`.`sub_id` = `ss`.`id` WHERE `ss`.`type` = 1
 ) as `s` WHERE `s`.`name` = `r`.`sub1_name` AND `s`.`user_id` = `r`.`user_id`);
+
+UPDATE `redirect_fact` `r` SET `r`.`sub12_id` = (
+SELECT `s`.`id` FROM (
+SELECT * FROM `sub` `ss` LEFT JOIN `sub_user` `su` ON `su`.`sub_id` = `ss`.`id` WHERE `ss`.`type` = 2
+) as `s` WHERE `s`.`name` = `r`.`sub2_name` AND `s`.`user_id` = `r`.`user_id`);
+
+UPDATE `redirect_fact` `r` SET `r`.`sub3_id` = (
+SELECT `s`.`id` FROM (
+SELECT * FROM `sub` `ss` LEFT JOIN `sub_user` `su` ON `su`.`sub_id` = `ss`.`id` WHERE `ss`.`type` = 3
+) as `s` WHERE `s`.`name` = `r`.`sub3_name` AND `s`.`user_id` = `r`.`user_id`);
+
+UPDATE `redirect_fact` `r` SET `r`.`sub4_id` = (
+SELECT `s`.`id` FROM (
+SELECT * FROM `sub` `ss` LEFT JOIN `sub_user` `su` ON `su`.`sub_id` = `ss`.`id` WHERE `ss`.`type` = 4
+) as `s` WHERE `s`.`name` = `r`.`sub4_name` AND `s`.`user_id` = `r`.`user_id`);
+
+UPDATE `redirect_fact` `r` SET `r`.`sub5_id` = (
+SELECT `s`.`id` FROM (
+SELECT * FROM `sub` `ss` LEFT JOIN `sub_user` `su` ON `su`.`sub_id` = `ss`.`id` WHERE `ss`.`type` = 5
+) as `s` WHERE `s`.`name` = `r`.`sub5_name` AND `s`.`user_id` = `r`.`user_id`);
 
 
 ALTER TABLE `order_fact` DROP COLUMN `lead_id`;
