@@ -2,6 +2,7 @@ package entity
 
 type (
 	Redirect struct {
+		Id			int
 		Uuid		string		`json:"uuid"`
 		UniqueId	int 		`json:"unique_id"`
 		OfferId		int			`json:"offer_id"`
@@ -88,4 +89,9 @@ func (r *Redirect) ParseSub() {
 
 	r.Sub5.Name = r.SubName5
 	r.Sub5.Type = 5
+}
+
+func (r Redirect) AsArray() map[string]interface{} {
+	a := map[string]interface{}{"id": r.Id}
+	return a
 }

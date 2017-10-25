@@ -4,15 +4,19 @@ CREATE TABLE order_fact(
   type SMALLINT,
   payment_type SMALLINT,
   tracking_uuid CHAR(36),
+  method SMALLINT,
+
   offer_id INTEGER DEFAULT 0,
   user_id INTEGER DEFAULT 0,
   client_id INTEGER DEFAULT 0,
+  redirect_id INTEGER DEFAULT 0,
+  time_id INTEGER,
+
   status SMALLINT,
   status_partner SMALLINT,
   payment FLOAT DEFAULT 0,
   sum FLOAT DEFAULT 0,
-  redirect_id INTEGER,
-  time_id INTEGER,
+
   time TIMESTAMP,
 
   CONSTRAINT order_fact_pk PRIMARY KEY (id)

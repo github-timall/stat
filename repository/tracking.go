@@ -5,18 +5,19 @@ import(
 	"github.com/github-timall/stat/entity"
 )
 
-func RedirectCreate(r entity.Redirect) entity.Redirect {
+func RedirectCreate(r *entity.Redirect) {
 	r.ParseSub()
 
-	RepoSubCreate(&r.Sub1)
-	RepoSubCreate(&r.Sub2)
-	RepoSubCreate(&r.Sub3)
-	RepoSubCreate(&r.Sub4)
-	RepoSubCreate(&r.Sub5)
+	SubCreate(&r.Sub1)
+	SubCreate(&r.Sub2)
+	SubCreate(&r.Sub3)
+	SubCreate(&r.Sub4)
+	SubCreate(&r.Sub5)
 
-	RepoSubUserCreate(r)
+	SubUserCreate(r)
 
-	_, err = db.Exec(`INSERT INTO redirect_fact(
+	var lastInsertId int
+	err = db.QueryRow(`INSERT INTO redirect_fact(
 		uuid,
 		unique_id,
 		landing_id,
@@ -28,7 +29,7 @@ func RedirectCreate(r entity.Redirect) entity.Redirect {
 		sub2_id,
 		sub3_id,
 		sub4_id,
-		sub5_id) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12);`,
+		sub5_id) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) RETURNING id;`,
 		r.Uuid,
 		r.UniqueId,
 		r.Landing.Id,
@@ -40,16 +41,15 @@ func RedirectCreate(r entity.Redirect) entity.Redirect {
 		r.Sub2.Id,
 		r.Sub3.Id,
 		r.Sub4.Id,
-		r.Sub5.Id)
+		r.Sub5.Id).Scan(&lastInsertId)
 	checkErr(err)
-
-	return r
+	r.Id = lastInsertId
 }
 
-func RepoRedirectFind(uuid string) entity.RedirectFact {
+func RedirectFind(uuid string) entity.RedirectFact {
 	var jsonPayload string
 
-	err = db.QueryRow("SELECT row_to_json(redirect_fact) FROM redirect_fact WHERE uuid = $1;", uuid).Scan(&jsonPayload)
+	err = db.QueryRow("SELECT row_to_json(redirect_fact) FROM redirect_fact WHERE uuid = $1 LIMIT 1;", uuid).Scan(&jsonPayload)
 	checkErr(err)
 
 	var r entity.RedirectFact
@@ -60,21 +60,20 @@ func RepoRedirectFind(uuid string) entity.RedirectFact {
 	return r
 }
 
-func RepoSubCreate(s *entity.Sub) {
+func SubCreate(s *entity.Sub) {
 	if len(s.Name) > 0 {
 		var lastInsertId int
 		err = db.QueryRow(`SELECT id FROM sub WHERE name = $1 AND type = $2`, s.Name, s.Type).Scan(&lastInsertId)
 		checkErr(err)
 		if lastInsertId == 0 {
-			query := `INSERT INTO sub (name, type) VALUES($1, $2) RETURNING id;`
-			err = db.QueryRow(query, s.Name, s.Type).Scan(&lastInsertId)
+			err = db.QueryRow(`INSERT INTO sub (name, type) VALUES($1, $2) RETURNING id;`, s.Name, s.Type).Scan(&lastInsertId)
 			checkErr(err)
 		}
 		s.Id = lastInsertId
 	}
 }
 
-func RepoSubUserCreate(r entity.Redirect)  {
+func SubUserCreate(r *entity.Redirect) {
 	query := `INSERT INTO sub_user (sub_id, user_id) SELECT $1, $2
 		WHERE NOT EXISTS (SELECT 1 FROM sub_user WHERE sub_id = $3 AND user_id = $4);`
 

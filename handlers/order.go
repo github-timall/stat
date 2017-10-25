@@ -10,6 +10,7 @@ import (
 )
 
 func VeinOrderCreate(w http.ResponseWriter, r *http.Request) {
+	//request
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
 	if err != nil {
 		panic(err)
@@ -20,6 +21,7 @@ func VeinOrderCreate(w http.ResponseWriter, r *http.Request) {
 
 	var order entity.OrderFact
 
+	//validate
 	if err = json.Unmarshal(body, &order); err != nil {
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(422)
@@ -28,15 +30,18 @@ func VeinOrderCreate(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	t := repository.OrderCreate(order)
+	repository.OrderCreate(&order)
+
+	//response
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusCreated)
-	if err := json.NewEncoder(w).Encode(t); err != nil {
+	if err := json.NewEncoder(w).Encode(order.AsArray()); err != nil {
 		panic(err)
 	}
 }
 
 func VeinOrderStatus(w http.ResponseWriter, r *http.Request) {
+	//request
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
 	if err != nil {
 		panic(err)
@@ -47,6 +52,7 @@ func VeinOrderStatus(w http.ResponseWriter, r *http.Request) {
 
 	var order entity.OrderFact
 
+	//validate
 	if err = json.Unmarshal(body, &order); err != nil {
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(422)
@@ -55,15 +61,18 @@ func VeinOrderStatus(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	t := repository.OrderStatus(order)
+	repository.OrderStatus(&order)
+
+	//response
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusCreated)
-	if err := json.NewEncoder(w).Encode(t); err != nil {
+	if err := json.NewEncoder(w).Encode(order.AsArray()); err != nil {
 		panic(err)
 	}
 }
 
 func VeinOrderPayment(w http.ResponseWriter, r *http.Request) {
+	//request
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
 	if err != nil {
 		panic(err)
@@ -74,6 +83,7 @@ func VeinOrderPayment(w http.ResponseWriter, r *http.Request) {
 
 	var order entity.OrderFact
 
+	//validate
 	if err = json.Unmarshal(body, &order); err != nil {
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(422)
@@ -82,10 +92,12 @@ func VeinOrderPayment(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	t := repository.OrderPayment(order)
+	repository.OrderPayment(&order)
+
+	//response
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusCreated)
-	if err := json.NewEncoder(w).Encode(t); err != nil {
+	if err := json.NewEncoder(w).Encode(order.AsArray()); err != nil {
 		panic(err)
 	}
 }

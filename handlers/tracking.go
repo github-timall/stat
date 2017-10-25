@@ -10,6 +10,7 @@ import (
 )
 
 func VeinRedirectCreate(w http.ResponseWriter, r *http.Request) {
+	//request
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
 	if err != nil {
 		panic(err)
@@ -20,6 +21,7 @@ func VeinRedirectCreate(w http.ResponseWriter, r *http.Request) {
 
 	var redirect entity.Redirect
 
+	//validate
 	if err = json.Unmarshal(body, &redirect); err != nil {
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(422)
@@ -28,10 +30,12 @@ func VeinRedirectCreate(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	t := repository.RedirectCreate(redirect)
+	repository.RedirectCreate(&redirect)
+
+	//response
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusCreated)
-	if err := json.NewEncoder(w).Encode(t); err != nil {
+	if err := json.NewEncoder(w).Encode(redirect.AsArray()); err != nil {
 		panic(err)
 	}
 }

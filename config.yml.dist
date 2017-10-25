@@ -1,6 +1,6 @@
 database:
-  host: "127.0.0.1"
-  port: "5432"
-  user: "stat"
-  password: "stat"
-  dbname: "stat"
+  host: stat-database
+  port: 5432
+  user: stat
+  password: stat
+  dbname: stat

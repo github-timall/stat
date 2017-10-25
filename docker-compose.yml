@@ -16,6 +16,12 @@ services:
   stat-migrate:
     build:
       ./migrate
+    environment:
+      - STAT_DB_HOST=stat-database
+      - STAT_DB_PORT=5432
+      - STAT_DB_USER=stat
+      - STAT_DB_PASSWORD=stat
+      - STAT_DB_NAME=stat
     depends_on:
       - stat-database
 
@@ -27,7 +33,7 @@ services:
     depends_on:
       - stat-database
 
-  stat-grafana:
-    image: grafana/grafana
-    ports:
-      - "3000:3000"
+#  stat-grafana:
+#    image: grafana/grafana
+#    ports:
+#      - "3000:3000"

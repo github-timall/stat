@@ -21,14 +21,13 @@ func init() {
 		config.Yml.Database.Password,
 		config.Yml.Database.DbName,
 	)
+	fmt.Println(dataSourceName)
 	db, err = sql.Open("postgres", dataSourceName)
-	if err != nil {
-		panic(err)
-	}
+	checkErr(err)
 }
 
 func checkErr(err error) {
 	if err != nil {
-		log.Printf("FAILURE: %v", err)
+		log.Printf("FAILURE REPO: %v", err)
 	}
 }

@@ -4,83 +4,62 @@ import (
 	"github.com/github-timall/stat/entity"
 )
 
-func OrderCreate(o entity.OrderFact) entity.OrderFact {
-	o.Analysis()
+func OrderCreate(o *entity.OrderFact) {
+	o.Parse()
+	r := RedirectFind(o.TrackingUuid)
+	OrderTimeCreate(&o.Time)
 
-	r := RepoRedirectFind(o.TrackingUuid)
+	var lastInsertId int
 
-	_, err = db.Exec(`INSERT INTO order_fact(
-		order_id,
+	err = db.QueryRow(`INSERT INTO order_fact(
+		uuid,
 		type,
 		payment_type,
 		tracking_uuid,
+		method,
 		offer_id,
 		user_id,
 		client_id,
+		redirect_id,
+		time_id,
 		status,
 		status_partner,
 		payment,
-		sum,
-		redirect_id) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12);`,
-		o.Id,
+		sum) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14) RETURNING id;`,
+		o.Uuid,
 		o.Type,
 		o.PaymentType,
 		o.TrackingUuid,
+		o.GetMethod(),
 		o.OfferId,
 		o.UserId,
 		o.ClientId,
+		r.Id,
+		o.Time.Id,
 		o.Status,
 		o.StatusPartner,
 		o.Payment,
-		o.Sum,
-		r.Id)
+		o.Sum).Scan(&lastInsertId)
 	checkErr(err)
-
-	OrderTimeCreate(o.Time)
-	ClientCreate(o.Client)
-
-	return o
+	o.Id = lastInsertId
 }
 
-func OrderTimeCreate(t entity.OrderTime) {
-	_, err = db.Exec(`INSERT INTO order_time(
-		order_id,
-		time,
-		day_id,
-		month_id,
-		quarter_id,
-		year_id) VALUES ($1,$2,$3,$4,$5,$6);`,
-		t.OrderId,
-		t.Time,
-		t.DayId,
-		t.MonthId,
-		t.QuarterId,
-		t.YearId)
+func OrderTimeCreate(t *entity.OrderTime) {
+	var lastInsertId int
+	err = db.QueryRow(`INSERT INTO order_time(time,day_id,month_id,quarter_id,year_id)VALUES($1,$2,$3,$4,$5);`,
+		t.Time,t.DayId,t.MonthId,t.QuarterId,t.YearId).Scan(&lastInsertId)
+	checkErr(err)
+	t.Id = lastInsertId
+}
+
+func OrderStatus(o *entity.OrderFact) {
+	_, err = db.Exec(`UPDATE order_fact SET status=$1,status_partner=$2,sum=$3 WHERE uuid=$4;`,
+		o.Status,o.StatusPartner,o.Sum,o.Uuid)
 	checkErr(err)
 }
 
-func ClientCreate(c entity.Client) {
-	_, err = db.Exec(`INSERT INTO client(client_id,phone_geo_code,age,gender,region) VALUES ($1,$2,$3,$4,$5);`,
-		c.ClientId,c.PhoneGeoCode,c.Age,c.Gender,c.Region)
-	checkErr(err)
-}
-
-func OrderStatus(o entity.OrderFact) entity.OrderFact {
-	_, err = db.Exec(`UPDATE order_fact SET status=$1,status_partner=$2 WHERE order_id=$3;`,o.Status,o.StatusPartner,o.Id)
-	checkErr(err)
-	RepoClientUpdate(o.Client)
-	return o
-}
-
-func OrderPayment(o entity.OrderFact) entity.OrderFact {
-	_, err = db.Exec(`UPDATE order_fact SET payment=$1 WHERE order_id=$2;`,o.Payment,o.Id)
-	checkErr(err)
-	RepoClientUpdate(o.Client)
-	return o
-}
-
-func RepoClientUpdate(c entity.Client) {
-	_, err = db.Exec(`UPDATE client SET phone_geo_code=$1,age=$2,gender=$3,region=$4 WHERE client_id=$5;`,
-		c.PhoneGeoCode,c.Age,c.Gender,c.Region,c.ClientId)
+func OrderPayment(o *entity.OrderFact) {
+	_, err = db.Exec(`UPDATE order_fact SET payment=$1,sum=$2 WHERE uuid=$3;`,
+		o.Payment,o.Sum,o.Uuid)
 	checkErr(err)
 }

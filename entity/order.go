@@ -2,9 +2,16 @@ package entity
 
 import "time"
 
+const (
+	TYPE_JS = 1
+	TYPE_API = 2
+	TYPE_POSTBACK = 3
+	TYPE_IFRAME = 4
+)
+
 type (
 	OrderFact struct {
-		Id				int		`json:"id"`
+		Id				int
 		Uid				string	`json:"uid"`
 		Uuid			string	`json:"uuid"`
 		Type			int		`json:"type"`
@@ -19,14 +26,12 @@ type (
 		Sum				float64	`json:"sum"`
 		CreatedAt		string	`json:"created_at"`
 		OfferId			int		`json:"offer_id"`
-		RedirectId		int
 
-		Client 			Client	`json:"client"`
 		Time 			OrderTime
 	}
 
 	OrderTime struct {
-		OrderId		int
+		Id		int
 		Time		string
 		DayId	 	int
 		MonthId		time.Month
@@ -39,24 +44,34 @@ type (
 		ExternalId 	int		`json:"external_id"`
 		CrmId		int		`json:"crm_id"`
 	}
-
-	Client struct {
-		ClientId		int		`json:"id"`
-		PhoneGeoCode	string	`json:"phone_geo_code"`
-		Age				int		`json:"age"`
-		Gender			string	`json:"gender"`
-		Region			string	`json:"region"`
-	}
 )
 
-func (f *OrderFact) Analysis() {
-	var t OrderTime
-	t.OrderId = f.Id
-	t.DateAnalysis(f.CreatedAt)
-	f.Time = t
+func (o OrderFact) GetMethod() int {
+	if o.Type == TYPE_JS {
+		return  2
+	}
+
+	if o.Type == TYPE_API {
+		return  4
+	}
+
+	if o.Type == TYPE_POSTBACK {
+		return  5
+	}
+
+	if o.Type == TYPE_IFRAME {
+		return  3
+	}
+	return  2
 }
 
-func (t *OrderTime) DateAnalysis(date string) {
+func (o *OrderFact) Parse() {
+	var t OrderTime
+	t.ParseDate(o.CreatedAt)
+	o.Time = t
+}
+
+func (t *OrderTime) ParseDate(date string) {
 	layout := "2006-01-02 15:04:05"
 	orderTime, err := time.Parse(layout, date)
 	checkErr(err)
@@ -76,4 +91,9 @@ func (t *OrderTime) DateAnalysis(date string) {
 		quarter = 3
 	}
 	t.QuarterId = quarter
+}
+
+func (o OrderFact) AsArray() map[string]interface{} {
+	a := map[string]interface{}{"id": o.Id}
+	return a
 }

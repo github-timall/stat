@@ -4,15 +4,18 @@ CREATE TABLE IF NOT EXISTS `order_fact` (
   `type` SMALLINT,
   `payment_type` SMALLINT,
   `tracking_uuid` CHAR(36),
+
   `offer_id` INTEGER DEFAULT 0,
   `user_id` INTEGER DEFAULT 0,
   `client_id` INTEGER DEFAULT 0,
+  `redirect_id` INTEGER,
+  `time_id` INTEGER,
+
   `status` SMALLINT,
   `status_partner` SMALLINT,
   `payment` FLOAT DEFAULT 0,
   `sum` FLOAT DEFAULT 0,
-  `redirect_id` INTEGER,
-  `time_id` INTEGER,
+
   `time` TIMESTAMP,
 
   PRIMARY KEY (id)
@@ -30,6 +33,7 @@ CREATE TABLE IF NOT EXISTS `order_time` (
 
 CREATE TABLE IF NOT EXISTS `client`(
   `id` INTEGER,
+  `uuid` CHAR(36),
   `phone_geo_code` CHAR(2),
   `age` SMALLINT,
   `gender` CHAR(1),
